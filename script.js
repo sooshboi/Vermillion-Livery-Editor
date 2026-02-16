@@ -1,4 +1,26 @@
-// Import three.js and GLTFLoader as ES modules
+// === Load GLB car model ===
+const loader = new GLTFLoader();
+loader.load(
+    'C7VETTEMODEL/c7unibody.glb', // your specific GLB file
+    (gltf) => {
+        const car = gltf.scene;
+        car.scale.set(1, 1, 1);
+        scene.add(car);
+
+        // Example: set car body color
+        car.traverse((child) => {
+            if (child.isMesh) {
+                child.material.color.set(0xff0000);
+            }
+        });
+    },
+    undefined,
+    (error) => {
+        console.error('Error loading GLB:', error);
+    }
+);
+
+    // Import three.js and GLTFLoader as ES modules
 import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
 import { GLTFLoader } from 'https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js';
