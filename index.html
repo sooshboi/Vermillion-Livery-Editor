@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Car Livery Editor</title>
-  <!-- Three.js core -->
-  <script src="script.js"></script>
-  <!-- GLTFLoader (must come after three.js) -->
-  <script src="https://unpkg.com/three@0.158.0/examples/js/loaders/GLTFLoader.js"></script>
-  <!-- Your custom script -->
-  <script src="script.js"></script>
+  <title>Online Car Livery Editor</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <!-- Your script is now a module -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
