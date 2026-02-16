@@ -1,0 +1,9 @@
+car-livery-editor/
+│
+├── index.html
+├── style.css
+├── script.js
+├── /cars
+│   └── C7/car.glb
+├── /assets
+└── README.md
