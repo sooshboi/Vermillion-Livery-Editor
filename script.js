@@ -1,12 +1,28 @@
-<!-- index.html -->
-<script type="module">
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-  import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
+// Scene setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-  // Now you can use it
-  const loader = new GLTFLoader();
-  loader.load('./C7VETTE_MODEL/c7unibody.glb', (gltf) => {
-    const car = gltf.scene;
-    scene.add(car);
-  });
-</script>
+// Add light
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(5, 10, 7.5);
+scene.add(light);
+
+// Load GLB model
+const loader = new THREE.GLTFLoader();  // must use THREE.GLTFLoader in this setup
+loader.load('C7VETTEMODEL/c7unibody.glb', (gltf) => {
+    scene.add(gltf.scene);
+}, undefined, (error) => {
+    console.error(error);
+});
+
+// Camera position
+camera.position.set(0, 2, 5);
+
+// Render loop
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+animate();
