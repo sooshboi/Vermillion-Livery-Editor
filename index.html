@@ -195,7 +195,7 @@ async function loadVehicle(url, name) {
     }
 
     const scene = createScene();
-
+    loadVehicle(vehicles[0].url, vehicles[0].name);
     engine.runRenderLoop(() => {
       scene.render();
     });
