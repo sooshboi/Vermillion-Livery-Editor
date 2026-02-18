@@ -50,16 +50,29 @@
     const loaderOverlay = document.getElementById('loader-overlay');
     loaderOverlay.classList.add('active');
 
-    loader.load(
-      './CAMAROMODEL/CAMAROUnibody.glb',  // ← CHANGE THIS PATH IF NEEDED
-      (gltf) => {
-        carModel = gltf.scene;
-        scene.add(carModel);
-        carModel.position.set(0, 0, 0);
-        carModel.scale.set(10, 10, 10);
-        console.log('Model loaded!');
-        loaderOverlay.classList.remove('active');
-      },
+   loader.load(
+  './CAMAROMODEL/CAMAROUnibody.glb',
+  (gltf) => {
+
+    carModel = gltf.scene;
+
+    carModel.traverse(obj => {
+      if (obj.isMesh) {
+        obj.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+      }
+    });
+
+    scene.add(carModel);
+
+    carModel.position.set(0, 0, 0);
+    carModel.scale.set(10, 10, 10);
+
+    console.log('Model loaded!');
+    loaderOverlay.classList.remove('active');
+  },
+  undefined,
+  (error) => console.error('Load error:', error)
+);
       (xhr) => {
         const percent = Math.round((xhr.loaded / xhr.total) * 100);
         document.getElementById('load-progress').textContent = percent + '%';
