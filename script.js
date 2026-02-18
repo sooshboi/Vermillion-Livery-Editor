@@ -18,6 +18,12 @@ dirLight.position.set(5, 5, 5);
 scene.add(dirLight);
 camera.position.z = 5;
 
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(),
+  new THREE.MeshNormalMaterial()
+);
+scene.add(cube);
+
    const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
