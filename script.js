@@ -1,12 +1,17 @@
 // === Load GLB car model ===
 const loader = new GLTFLoader();
 loader.load(
-    'https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/CHALLENGERMODEL/challengerunibody.glb'
-    (gltf) => {
-        const car = gltf.scene;
-        carModel.position.set(0, 0, 0);
-        car.scale.set(1, 1, 1);
-        scene.add(car);
+    'https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/CAMAROMODEL/CAMAROUnibody.glb'
+   (gltf) => {
+ carModel = gltf.scene;
+ scene.add(carModel);
+ carModel.position.set(0, 0, 0);
+ carModel.scale.set(1, 1, 1);
+ console.log('Default car loaded!');
+ },
+ (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
+ (error) => console.error('Load error:', error)
+);
 
         // Example: set car body color
         car.traverse((child) => {
