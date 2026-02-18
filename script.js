@@ -12,8 +12,8 @@ scene.add(new THREE.AmbientLight(...));
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('three-canvas').appendChild(renderer.domElement);
 
-scene.add(new /THREE.AmbientLight(0xffffff, 0.8));
-   const dirLight = new /THREE.DirectionalLight(0xffffff, 1);
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+   const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.position.set(5, 5, 5);
 scene.add(dirLight);
 camera.position.z = 5;
