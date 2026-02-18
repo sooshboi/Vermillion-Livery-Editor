@@ -23,8 +23,8 @@ const createScene = () => {
   light.intensity = 1.2;
 
   BABYLON.SceneLoader.ImportMesh(
-    "./Assets/",
-    "./Models/",          // folder
+    "",
+    "./Assets/Models/",          // folder
     "CAMAROUnibody.glb",       // file
     scene,
     function (meshes) {
