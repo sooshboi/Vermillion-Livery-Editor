@@ -361,7 +361,7 @@
     </div>
   </div>
 
- <script type="module">
+  <script type="module">
   import * as THREE from 'https://unpkg.com/three@0.172.0/build/three.module.js';
 
   const scene = new THREE.Scene();
@@ -416,7 +416,7 @@
     loaderOverlay.classList.add('active');
 
     loader.load(
-      './CAMAROMODEL/CamaroUnibody.glb',  // ← CHANGE THIS PATH IF NEEDED
+      './CAMAROMODEL/CAMAROUnibody.glb',  // ← CHANGE THIS PATH IF NEEDED
       (gltf) => {
         carModel = gltf.scene;
         scene.add(carModel);
