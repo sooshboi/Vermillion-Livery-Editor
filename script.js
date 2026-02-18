@@ -26,18 +26,21 @@ BABYLON.SceneLoader.ImportMesh(
   "CAMAROUnibody.glb",
   scene,
   function (meshes) {
-    console.log(" Car loaded", meshes);
+    console.log("Car loaded", meshes);
 
-    const car = meshes[0];
+    // Find first visible mesh
+    const car = meshes.find(m => m.getTotalVertices && m.getTotalVertices() > 0);
 
-    // Adjust if needed
-    car.scaling = new BABYLON.Vector3(1, 1, 1);
-
-    // Aim camera at car
-    camera.setTarget(car);
+    if (car) {
+      car.scaling = new BABYLON.Vector3(1, 1, 1);
+      camera.setTarget(car);
+      console.log(" Visible mesh found:", car.name);
+    } else {
+      console.warn(" No visible mesh found");
+    }
   },
   null,
   function (scene, message) {
-    console.error(" Load error:", message);
+    console.error("Load error:", message);
   }
 );
