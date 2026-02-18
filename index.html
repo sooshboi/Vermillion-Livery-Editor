@@ -12,11 +12,17 @@
 </head>
 <body>
   <canvas id="renderCanvas"></canvas>
+<script>
+
 const vehicles = [
-  ( name: "C7 Corvette", url: "https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/C7VETTEMODEL/c7unibody.glb" );,  // example from Babylon
-  ( name: "Charger", url: "https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/CHARGERMODEL/chargerunibody-compressed.glb" );
-  ( name: "M2 Comp", url: "https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/M2COMPMODEL/M2Unibody.glb" );
-  <script>
+  { name: "C7 Corvette", url: "https://raw.githubusercontent.com/sooshboi/Vermillion-Livery-Editor/main/C7VETTEMODEL/c7unibody.glb" },
+  { name: "Charger", url: "https://raw.githubusercontent.com/sooshboi/Vermillion-Livery-Editor/main/CHARGERMODEL/chargerunibody-compressed.glb" },
+  { name: "M2 Comp", url: "https://raw.githubusercontent.com/sooshboi/Vermillion-Livery-Editor/main/M2COMPMODEL/M2Unibody.glb" }
+];
+
+const canvas = document.getElementById("renderCanvas");
+const engine = new BABYLON.Engine(canvas, true);
+
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
 
@@ -51,7 +57,7 @@ async function loadVehicle(url, name) {
       new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
     }
 
-    console.log(Loaded ${name} successfully!);
+   console.log(`Loaded ${name} successfully!`);
   } catch (err) {
     console.error("Failed to load vehicle:", err);
   }
