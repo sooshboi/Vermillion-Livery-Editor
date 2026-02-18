@@ -12,7 +12,10 @@
 </head>
 <body>
   <canvas id="renderCanvas"></canvas>
-
+const vehicles = [
+  { name: "C7 Corvette", url: "https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/C7VETTEMODEL/c7unibody.glb" },  // example from Babylon
+  { name: "Charger", url: "https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/CHARGERMODEL/chargerunibody-compressed.glb" },
+  { name: "M2 Comp", url: "https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/M2COMPMODEL/M2Unibody.glb" },
   <script>
     const canvas = document.getElementById("renderCanvas");
     const engine = new BABYLON.Engine(canvas, true);
@@ -23,7 +26,36 @@
       // Minimal camera (required, but does almost nothing since no 3D content yet)
       const camera = new BABYLON.ArcRotateCamera("cam", Math.PI / 2, Math.PI / 2, 10, BABYLON.Vector3.Zero(), scene);
       camera.attachControl(canvas, true);  // Lets you orbit/zoom if you add stuff later
+let currentVehicle = null; // Keeps track of the loaded car so we can remove old ones
 
+async function loadVehicle(url, name) {
+  try {
+    // Remove old vehicle if any
+    if (currentVehicle) {
+      currentVehicle.dispose();
+    }
+
+    // Load the GLB
+    const result = await BABYLON.SceneLoader.ImportMeshAsync("", "", url, scene);
+    currentVehicle = result.meshes[0]; // Main/root mesh of the model
+
+    currentVehicle.position = BABYLON.Vector3.Zero(); // Center it
+    currentVehicle.scaling = new BABYLON.Vector3(2, 2, 2); // Scale up if small – change numbers
+
+    // Focus camera on it
+    camera.setTarget(currentVehicle.position);
+    camera.radius = 15; // Zoom level – tweak this
+
+    // Add light if dark
+    if (scene.lights.length === 0) {
+      new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    }
+
+    console.log(Loaded ${name} successfully!);
+  } catch (err) {
+    console.error("Failed to load vehicle:", err);
+  }
+}
       // No lights/meshes/ground needed for GUI-only
 
       // Your full GUI code here (pasted exactly as before)
@@ -167,7 +199,7 @@
 
     window.addEventListener("resize", () => {
       engine.resize();
-    });
+    });  
   </script>
 </body>
 </html>
