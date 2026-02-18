@@ -1,63 +1,92 @@
-import * as THREE from 'https://unpkg.com/three@0.172.0/build/three.module.js';
-import { OrbitControls } from 'https://unpkg.com/three@0.172.0/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://unpkg.com/three@0.172.0/examples/jsm/loaders/GLTFLoader.js';
+<script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/controls/OrbitControls.js';
 
-// Scene
-const scene = new THREE.Scene();
+    // Theme switcher (kept simple)
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme') || 'vermillion';
+    body.setAttribute('data-theme', savedTheme);
+    themeButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === savedTheme);
+    });
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.dataset.theme;
+        body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        themeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
 
-// Camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
+    // Three.js setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('three-canvas').appendChild(renderer.domElement);
 
-// Renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById('three-canvas').appendChild(renderer.domElement);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(5, 5, 5);
+    scene.add(dirLight);
 
-// Lights
-scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    camera.position.z = 5;
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(5, 5, 5);
-scene.add(dirLight);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
 
-// Camera position
-camera.position.z = 5;
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let selectedPanel = null;
+    let carModel = null;
 
-// Controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
+    const loader = new GLTFLoader();
 
-// Loader
-const loader = new GLTFLoader();
-let carModel = null;
+    // Show loader overlay when starting load
+    const loaderOverlay = document.getElementById('loader-overlay');
+    loaderOverlay.classList.add('active');
 
-loader.load(
-  './CAMAROMODEL/CAMAROUnibody.glb', // path to model
-  (gltf) => {
-    console.log('Model loaded');
-    carModel = gltf.scene;
-    scene.add(carModel);
-  },
-  undefined,
-  (error) => console.error('Load error', error)
-);
+    loader.load(
+      './CAMAROMODEL/CAMAROUnibody.glb',  // ← CHANGE THIS PATH IF NEEDED
+      (gltf) => {
+        carModel = gltf.scene;
+        scene.add(carModel);
+        carModel.position.set(0, 0, 0);
+        carModel.scale.set(10, 10, 10);
+        console.log('Model loaded!');
+        loaderOverlay.classList.remove('active');
+      },
+      (xhr) => {
+        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+        document.getElementById('load-progress').textContent = percent + '%';
+      },
+      (error) => {
+        console.error('Load error:', error);
+        document.getElementById('load-progress').textContent = 'Failed to load model';
+        document.getElementById('load-error').textContent = 'Check console for details. Try refreshing or check file path.';
+        document.getElementById('load-error').style.display = 'block';
+        setTimeout(() => {
+          loaderOverlay.classList.remove('active');
+        }, 5000); // Hide after showing error
+      }
+    );
 
-// Animation loop
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
+    // Rest of your code (raycaster, color change, animate, resize, tabs) goes here...
+    // (paste your existing Three.js logic below this point)
 
-// Resize handling
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
