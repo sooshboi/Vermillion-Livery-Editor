@@ -1,159 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vermillion M+ Livery Editor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vermillion M+ Livery Editor</title>
+  <style>
+    :root {
+      --bg-primary: #0f0f0f;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #222;
+      --text-primary: #e0e0e0;
+      --text-secondary: #aaa;
+      --accent: #0066ff;
+      --accent-hover: #0055dd;
+      --border: #333;
+      --glow: rgba(0, 102, 255, 0.35);
+    }
 
-<style>
-body{
-  margin:0;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns:1fr 360px;
-  height:100vh;
-  font-family:Segoe UI, sans-serif;
-  background:#0f0f0f;
-  color:white;
-}
+    [data-theme="light"] {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #eeeeee;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --accent: #0066ff;
+      --accent-hover: #0055dd;
+      --border: #ddd;
+      --glow: rgba(0, 102, 255, 0.25);
+    }
 
-.left{
-  position:relative;
-  background:#1a1a1a;
-}
+    [data-theme="vermillion"] {
+      --accent: #e63946;
+      --accent-hover: #d62839;
+      --glow: rgba(230, 57, 70, 0.35);
+    }
 
-#three-canvas{
-  position:absolute;
-  inset:0;
-}
+    [data-theme="midnight"] {
+      --accent: #4361ee;
+      --accent-hover: #3f37c9;
+      --glow: rgba(67, 97, 238, 0.35);
+    }
 
-.right{
-  background:#111;
-  border-left:1px solid #333;
-  display:flex;
-  flex-direction:column;
-}
+    [data-theme="neon"] {
+      --accent: #39ff14;
+      --accent-hover: #32cc11;
+      --glow: rgba(57, 255, 20, 0.4);
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111;
+      --bg-tertiary: #1a1a1a;
+    }
 
-.logo-footer{
-  margin-top:auto;
-  padding:20px;
-  text-align:center;
-  font-weight:900;
-  font-size:2rem;
-  background:#0d1a33;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.logo-footer span{
-  color:#e63946;
-}
-</style>
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    .left {
+      background: var(--bg-secondary);
+      position: relative;
+    }
+
+    #three-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .title-block {
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.6);
+      padding: 20px 30px;
+      border-left: 6px solid var(--accent);
+      transition: border-left 0.4s ease;
+    }
+
+    .title-block span {
+      display: block;
+      font-size: 1.1em;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    .right {
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      transition: background 0.4s ease, border-left 0.4s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .theme-switcher {
+      display: flex;
+      gap: 10px;
+    }
+
+    .theme-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .theme-btn.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--glow);
+      transform: scale(1.15);
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 6px var(--glow);
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 18px 0;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .tab.active,
+    .tab:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .tab:not(.active):hover {
+      background: rgba(var(--accent), 0.15);
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .assets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+    }
+
+    .asset-card {
+      aspect-ratio: 1;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 2px solid transparent;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .asset-card:hover {
+      transform: scale(1.08) translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 32px var(--glow);
+      z-index: 10;
+    }
+
+    .asset-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .asset-card:hover .asset-placeholder {
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+      color: var(--text-primary);
+    }
+
+    .logo-footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: #0d1a33;
+      border-top: 1px solid var(--border);
+      letter-spacing: -1px;
+      transition: background 0.4s ease, border-top 0.4s ease;
+    }
+
+    .logo-footer span {
+      color: var(--accent);
+    }
+
+    .color-picker {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: var(--bg-secondary);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      z-index: 100;
+      display: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: background 0.4s ease, border 0.4s ease;
+    }
+
+    .color-picker.active {
+      display: block;
+    }
+
+    #color-input {
+      margin-top: 10px;
+      width: 100%;
+      height: 40px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Loading Overlay */
+    #loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      color: white;
+      font-size: 1.8rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    #loader-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #load-progress {
+      margin-top: 15px;
+      font-size: 1.3rem;
+    }
+
+    #load-error {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #ff4444;
+      max-width: 80%;
+      text-align: center;
+    }
+  </style>
 </head>
+<body data-theme="vermillion">
 
-<body>
-
-<div class="left">
-  <div id="three-canvas"></div>
-</div>
-
-<div class="right">
-  <div style="padding:20px;">Vermillion Controls Panel</div>
-  <div class="logo-footer">
-    V<span>+</span>
+  <!-- Loading Overlay -->
+  <div id="loader-overlay">
+    <div>Loading Editor...</div>
+    <div id="load-progress">0%</div>
+    <div id="load-error" style="display:none;"></div>
   </div>
-</div>
 
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/controls/OrbitControls.js';
+  <div class="left">
+    <div class="title-block">
+      360<br/>
+      <span>INTERACTABLE<br/>VEHICLE</span>
+    </div>
+    <div id="three-canvas"></div>
 
-/* ======================
-   BASIC SCENE SETUP
-====================== */
+    <div class="color-picker" id="color-picker">
+      <div class="section-title">Select Color</div>
+      <input type="color" id="color-input" value="#ff0000">
+      <button id="save-preview" style="margin-top:12px; padding:8px 16px; background:var(--accent); color:white; border:none; border-radius:6px; cursor:pointer; width:100%;">
+        Save Preview
+      </button>
+    </div>
+  </div>
 
-const container = document.getElementById("three-canvas");
+  <div class="right">
+    <div class="header">
+      <div></div>
+      <div class="header-buttons">
+        <button id="spin-toggle" class="btn">Auto-Spin: ON</button>
+      </div>
+    </div>
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111111);
+    <div class="tabs">
+      <div class="tab active" data-tab="vehicles">Vehicles</div>
+      <div class="tab" data-tab="wraps">Wraps</div>
+      <div class="tab" data-tab="decals">Decals</div>
+    </div>
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  container.clientWidth / container.clientHeight,
-  0.1,
-  1000
-);
-camera.position.set(0, 2, 5);
+    <div class="content" id="content-area">
+      <!-- Tab content -->
+    </div>
 
-const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-container.appendChild(renderer.domElement);
+    <div class="logo-footer">
+      V<span>+</span><br/>
+      <span style="font-size:0.7rem; color:var(--text-secondary);">VERMILLION M+</span>
+    </div>
+  </div>
 
-/* ======================
-   LIGHTING
-====================== */
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/controls/OrbitControls.js';
 
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
-hemiLight.position.set(0, 20, 0);
-scene.add(hemiLight);
+    // Theme switcher (kept simple)
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme') || 'vermillion';
+    body.setAttribute('data-theme', savedTheme);
+    themeButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === savedTheme);
+    });
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.dataset.theme;
+        body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        themeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(5, 10, 7.5);
-scene.add(dirLight);
+    // Three.js setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('three-canvas').appendChild(renderer.domElement);
 
-/* ======================
-   CONTROLS
-====================== */
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(5, 5, 5);
+    scene.add(dirLight);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.target.set(0,1,0);
+    camera.position.z = 5;
 
-/* ======================
-   LOAD GLB MODEL
-====================== */
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
 
-const loader = new GLTFLoader();
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let selectedPanel = null;
+    let carModel = null;
 
-loader.load(
-  './CAMAROMODEL/camarounibody.glb',   // <-- make sure this path + filename is correct
-  (gltf)=>{
-    const car = gltf.scene;
-    car.scale.set(1,1,1);
-    scene.add(car);
-  },
-  undefined,
-  (error)=>{
-    console.error("Error loading model:", error);
-  }
-);
+    const loader = new GLTFLoader();
 
-/* ======================
-   RESIZE HANDLER
-====================== */
+    // Show loader overlay when starting load
+    const loaderOverlay = document.getElementById('loader-overlay');
+    loaderOverlay.classList.add('active');
 
-window.addEventListener("resize", ()=>{
-  const width = container.clientWidth;
-  const height = container.clientHeight;
+    loader.load(
+      './C7VETTEMODEL/c7unibody.glb',  // ← CHANGE THIS PATH IF NEEDED
+      (gltf) => {
+        carModel = gltf.scene;
+        scene.add(carModel);
+        carModel.position.set(0, 0, 0);
+        carModel.scale.set(1, 1, 1);
+        console.log('Model loaded!');
+        loaderOverlay.classList.remove('active');
+      },
+      (xhr) => {
+        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+        document.getElementById('load-progress').textContent = percent + '%';
+      },
+      (error) => {
+        console.error('Load error:', error);
+        document.getElementById('load-progress').textContent = 'Failed to load model';
+        document.getElementById('load-error').textContent = 'Check console for details. Try refreshing or check file path.';
+        document.getElementById('load-error').style.display = 'block';
+        setTimeout(() => {
+          loaderOverlay.classList.remove('active');
+        }, 5000); // Hide after showing error
+      }
+    );
 
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-  renderer.setSize(width, height);
-});
+    // Rest of your code (raycaster, color change, animate, resize, tabs) goes here...
+    // (paste your existing Three.js logic below this point)
 
-/* ======================
-   ANIMATION LOOP
-====================== */
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
 
-function animate(){
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
-
-</script>
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
-
