@@ -20,8 +20,24 @@ new BABYLON.HemisphericLight(
 );
 
 // TEST OBJECT
-BABYLON.MeshBuilder.CreateBox("box", {}, scene);
+BABYLON.SceneLoader.ImportMesh(
+  "",
+  "./assets/models/",
+  "CAMAROUnibody.glb",
+  scene,
+  function (meshes) {
+    console.log(" Car loaded", meshes);
 
-engine.runRenderLoop(() => {
-  scene.render();
-});
+    const car = meshes[0];
+
+    // Adjust if needed
+    car.scaling = new BABYLON.Vector3(1, 1, 1);
+
+    // Aim camera at car
+    camera.setTarget(car);
+  },
+  null,
+  function (scene, message) {
+    console.error(" Load error:", message);
+  }
+);
