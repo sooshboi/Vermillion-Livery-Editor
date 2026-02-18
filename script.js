@@ -1,6 +1,6 @@
 <script type=“module”>
    Imports - must be at the VERY TOP
-      import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+      import * as /THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
       import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
       import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/controls/OrbitControls.js';
 
