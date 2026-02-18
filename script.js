@@ -1,5 +1,5 @@
 <script type="module">
-  import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+  import * as THREE from 'https://unpkg.com/three@0.172.0/build/three.module.js';
 
   const scene = new THREE.Scene();
   console.log('Three loaded', THREE);
