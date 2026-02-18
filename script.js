@@ -1,6 +1,6 @@
 // === Load GLB car model ===
 const loader = new GLTFLoader();
-   import * as THREE from "three"; // Now "three" will resolve via the import map
+   import * as THREE from './js/build/three.module.js';
 
 // Your Three.js code
 const scene = new THREE.Scene();
