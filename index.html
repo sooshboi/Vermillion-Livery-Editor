@@ -1,67 +1,29 @@
-<script type="module">
-import * as THREE from 'https://unpkg.com/three@0.172.0/build/three.module.js';
-import { OrbitControls } from 'https://unpkg.com/three@0.172.0/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://unpkg.com/three@0.172.0/examples/jsm/loaders/GLTFLoader.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Car Viewer</title>
 
-const scene = new THREE.Scene();
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
 
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
+    #three-canvas {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById('three-canvas').appendChild(renderer.domElement);
+<body>
 
-scene.add(new THREE.AmbientLight(0xffffff, 1));
+  <!-- Container where Three.js will inject the canvas -->
+  <div id="three-canvas"></div>
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-dirLight.position.set(5, 5, 5);
-scene.add(dirLight);
+  <!-- Load your JS file as a module -->
+  <script type="module" src="./script.js"></script>
 
-camera.position.set(0, 1.5, 5);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-
-let carModel = null;
-
-const loader = new GLTFLoader();
-const loaderOverlay = document.getElementById('loader-overlay');
-loaderOverlay.classList.add('active');
-
-loader.load(
-  './CAMAROMODEL/CAMAROUnibody.glb',
-  'https://raw.githubusercontent.com/sooshboi/vermillion-livery-editor/main/CAMAROMODEL/CAMAROUnibody.glb',
-  (gltf) => {
-    carModel = gltf.scene;
-    scene.add(carModel);
-
-    carModel.scale.set(1, 1, 1);
-    carModel.position.set(0, 0, 0);
-
-    console.log('Model loaded', carModel);
-    loaderOverlay.classList.remove('active');
-  },
-  undefined,
-  (error) => {
-    console.error('Load error:', error);
-  }
-);
-
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-</script>
+</body>
+</html>
