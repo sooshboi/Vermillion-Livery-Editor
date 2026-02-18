@@ -1,6 +1,11 @@
 // === Load GLB car model ===
 const loader = new GLTFLoader();
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+   import * as THREE from "three"; // Now "three" will resolve via the import map
+
+// Your Three.js code
+const scene = new THREE.Scene();
+// ...
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
     import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/loaders/GLTFLoader.js';
     import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/controls/OrbitControls.js';
 
