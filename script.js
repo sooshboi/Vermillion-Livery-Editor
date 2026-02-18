@@ -33,8 +33,10 @@
     dirLight.position.set(5, 5, 5);
     scene.add(dirLight);
 
-    camera.position.z = 5;
-
+    camera.position.set(0, 2, 10);
+    controls.target.set(0, 1, 0);
+    controls.update();
+    
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -50,23 +52,29 @@
     const loaderOverlay = document.getElementById('loader-overlay');
     loaderOverlay.classList.add('active');
 
-  loader.load('./CAMAROMODEL/CAMAROUnibody.glb', (gltf) => {
-  carModel = gltf.scene;
-  scene.add(carModel);
-
-  const box = new THREE.Box3().setFromObject(carModel);
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
-
-  carModel.position.sub(center);
-
-  const maxDim = Math.max(size.x, size.y, size.z);
-  camera.position.set(0, maxDim * 0.8, maxDim * 2.2);
-  controls.target.set(0, 0, 0);
-  controls.update();
-
-  loaderOverlay.classList.remove('active');
-});
+  loader.load(
+  'https://raw.githubusercontent.com/sooshboi/vermillion-livery-editor/main/C7VETTEMODEL/c7unibody.glb',
+  (gltf) => {
+    console.log('GLTF loaded! Children count:', gltf.scene.children.length);
+    console.log('Bounding box:', new THREE.Box3().setFromObject(gltf.scene).getSize(new THREE.Vector3()));
+    if (carModel) scene.remove(carModel);
+    carModel = gltf.scene;
+    scene.add(carModel);
+    carModel.position.set(0, 0, 0);
+    carModel.scale.set(1, 1, 1);
+    // Force visible
+    carModel.traverse((child) => {
+      if (child.isMesh) child.visible = true;
+    });
+    console.log('Model added — should be visible now');
+    loaderOverlay.classList.remove('active');
+    renderer.render(scene, camera);  // Redraw
+  },
+  undefined,
+  (error) => {
+    console.error('Loader error:', error);
+  }
+);
   undefined,
   (error) => console.error('Load error:', error)
 );
