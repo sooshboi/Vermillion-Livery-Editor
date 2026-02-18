@@ -20,3 +20,24 @@ camera.position.z = 5;
     const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
+
+    const loader = new GLTFLoader();
+    let carModel = null;
+loader.load(
+ 'https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/CAMAROMODEL/CAMAROUnibody.glb', // ← CHANGE THIS TO YOUR RAW URL
+ (gltf) => {
+ carModel = gltf.scene;
+ scene.add(carModel);
+ carModel.position.set(0, 0, 0);
+ carModel.scale.set(1, 1, 1);
+ console.log('Default car loaded!');
+ },
+ (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
+ (error) => console.error('Error loading default car:', error)
+);
+function animate() {
+ requestAnimationFrame(animate);
+ controls.update();
+ renderer.render(scene, camera);
+}
+animate();
