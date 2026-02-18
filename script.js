@@ -50,26 +50,23 @@
     const loaderOverlay = document.getElementById('loader-overlay');
     loaderOverlay.classList.add('active');
 
-   loader.load(
-  './CAMAROMODEL/CAMAROUnibody.glb',
-  (gltf) => {
+  loader.load('./CAMAROMODEL/CAMAROUnibody.glb', (gltf) => {
+  carModel = gltf.scene;
+  scene.add(carModel);
 
-    carModel = gltf.scene;
+  const box = new THREE.Box3().setFromObject(carModel);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
 
-    carModel.traverse(obj => {
-      if (obj.isMesh) {
-        obj.material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-      }
-    });
+  carModel.position.sub(center);
 
-    scene.add(carModel);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  camera.position.set(0, maxDim * 0.8, maxDim * 2.2);
+  controls.target.set(0, 0, 0);
+  controls.update();
 
-    carModel.position.set(0, 0, 0);
-    carModel.scale.set(10, 10, 10);
-
-    console.log('Model loaded!');
-    loaderOverlay.classList.remove('active');
-  },
+  loaderOverlay.classList.remove('active');
+});
   undefined,
   (error) => console.error('Load error:', error)
 );
