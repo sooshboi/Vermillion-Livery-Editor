@@ -1,7 +1,7 @@
 // === Load GLB car model ===
 const loader = new GLTFLoader();
 loader.load(
-    'https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/C7VETTEMODEL/c7unibody.glb'
+    'https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/CAMAROMODEL/CAMAROUnibody.glb'
     (gltf) => {
         const car = gltf.scene;
         carModel.position.set(0, 0, 0);
