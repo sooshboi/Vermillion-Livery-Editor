@@ -24,7 +24,7 @@ controls.dampingFactor = 0.05;
 
    const loader = new GLTFLoader();
    let carModel = null;
-loader.load('./models/camaro.glb',
+loader.load('./CAMAROMODELS/CAMAROUnibody.glb',
 'https://raw.githubusercontent.com/sooshboi/vermillion-livery-editor/main/CAMAROMODEL/CAMAROUnibody.glb',  
     (gltf) => {
     console.log('Model loaded');
