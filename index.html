@@ -1,1 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Vermillion M+ Editor</title>
 
+  <!-- Babylon -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+</head>
+
+<body style="margin:0; overflow:hidden;">
+  <canvas id="three-canvas" style="width:100%; height:100vh;"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+  <canvas id="renderCanvas"></canvas>
+<script>
+
+const vehicles = [
+  { name: "C7 Corvette", url: "https://raw.githubusercontent.com/sooshboi/Vermillion-Livery-Editor/main/C7VETTEMODEL/c7unibody.glb" },
+  { name: "Charger", url: "https://raw.githubusercontent.com/sooshboi/Vermillion-Livery-Editor/main/CHARGERMODEL/chargerunibody-compressed.glb" },
+  { name: "M2 Comp", url: "https://raw.githubusercontent.com/sooshboi/Vermillion-Livery-Editor/main/M2COMPMODEL/M2Unibody.glb" }
+];
+
+const canvas = document.getElementById("renderCanvas");
+const engine = new BABYLON.Engine(canvas, true);
+
+    function createScene() {
+      const scene = new BABYLON.Scene(engine);
+
+      // Minimal camera (required, but does almost nothing since no 3D content yet)
+      const camera = new BABYLON.ArcRotateCamera("cam", Math.PI / 2, Math.PI / 2, 10, BABYLON.Vector3.Zero(), scene);
+      camera.attachControl(canvas, true);  // Lets you orbit/zoom if you add stuff later
+let currentVehicle = null; // Keeps track of the loaded car so we can remove old ones
+
+async function loadVehicle(url, name) {
+  try {
+    // Remove old vehicle if any
+    if (currentVehicle) {
+      currentVehicle.dispose();
+    }
+
+    // Load the GLB
+    const result = await BABYLON.SceneLoader.ImportMeshAsync("", "", url, scene);
+    currentVehicle = result.meshes[0]; // Main/root mesh of the model
+
+    currentVehicle.position = BABYLON.Vector3.Zero(); // Center it
+    currentVehicle.scaling = new BABYLON.Vector3(2, 2, 2); // Scale up if small – change numbers
+
+    // Focus camera on it
+    camera.setTarget(currentVehicle.position);
+    camera.radius = 15; // Zoom level – tweak this
+
+    // Add light if dark
+    if (scene.lights.length === 0) {
+      new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    }
+
+   console.log(`Loaded ${name} successfully!`);
+  } catch (err) {
+    console.error("Failed to load vehicle:", err);
+  }
+}
+      // No lights/meshes/ground needed for GUI-only
+
+      // Your full GUI code here (pasted exactly as before)
+      const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+
+      const mainGrid = new BABYLON.GUI.Grid();
+      mainGrid.width = "100%";
+      mainGrid.height = "100%";
+     mainGrid.addColumnDefinition(1.50);
+      mainGrid.addColumnDefinition(1.40);
+  // Right assets
+      advancedTexture.addControl(mainGrid);
+
+      // RIGHT PANEL (dark bg)
+      const rightPanel = new BABYLON.GUI.Rectangle();
+      rightPanel.background = "#1a1a1a";
+      rightPanel.thickness = 0;
+      rightPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+      rightPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+      rightPanel.width = "30%";
+      rightPanel.height = "100%";
+      mainGrid.addControl(rightPanel, 0, 1);  // Column 1
+
+      const rightStack = new BABYLON.GUI.StackPanel();
+      rightStack.width = "100%";
+      rightStack.height = "100%";
+      rightStack.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+      rightPanel.addControl(rightStack);
+
+      // TAB BAR
+      const tabBar = new BABYLON.GUI.Rectangle();
+      tabBar.height = "40px";
+      tabBar.thickness = 0;
+      tabBar.background = "#333333";
+      rightStack.addControl(tabBar);
+
+      const tabsStack = new BABYLON.GUI.StackPanel();
+      tabsStack.isVertical = false;
+      tabsStack.height = "100%";
+      tabsStack.width = "100%";
+      tabBar.addControl(tabsStack);
+
+      // Vehicles tab
+      const vehiclesTab = BABYLON.GUI.Button.CreateSimpleButton("vehicles", "Vehicles");
+      vehiclesTab.width = "33%";
+      vehiclesTab.height = "100%";
+      vehiclesTab.color = "white";
+      vehiclesTab.background = "#555555";
+      vehiclesTab.fontSize = 18;
+      vehiclesTab.thickness = 0;
+      tabsStack.addControl(vehiclesTab);
+
+      // Wraps tab (active blue)
+      const wrapsTab = BABYLON.GUI.Button.CreateSimpleButton("wraps", "Wraps");
+      wrapsTab.width = "33%";
+      wrapsTab.height = "100%";
+      wrapsTab.color = "white";
+      wrapsTab.background = "#0066cc";
+      wrapsTab.fontSize = 18;
+      wrapsTab.thickness = 0;
+      tabsStack.addControl(wrapsTab);
+
+      // Decals tab
+      const decalsTab = BABYLON.GUI.Button.CreateSimpleButton("decals", "Decals");
+      decalsTab.width = "33%";
+      decalsTab.height = "100%";
+      decalsTab.color = "white";
+      decalsTab.background = "#555555";
+      decalsTab.fontSize = 18;
+      decalsTab.thickness = 0;
+      tabsStack.addControl(decalsTab);
+
+      // SCROLL MAIN ASSETS
+      const scrollMain = new BABYLON.GUI.ScrollViewer();
+      scrollMain.height = "0.4";
+      scrollMain.width = "100%";
+      scrollMain.thickness = 0;
+      scrollMain.background = "#222222";
+      scrollMain.barColor = "#444444";
+      scrollMain.barBackground = "#111111";
+      rightStack.addControl(scrollMain);
+
+      const mainContent = new BABYLON.GUI.StackPanel();
+      mainContent.width = "100%";
+      scrollMain.addControl(mainContent);
+
+      // Dummy placeholders (remove later)
+      for (let i = 0; i < 8; i++) {
+        const item = new BABYLON.GUI.Rectangle();
+        item.height = "80px";
+        item.width = "90%";
+        item.background = "#333333";
+        item.thickness = 1;
+        item.color = "white";
+        item.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        const label = new BABYLON.GUI.TextBlock();
+        label.text = "Asset Item " + (i + 1);
+        label.color = "white";
+        label.fontSize = 20;
+        item.addControl(label);
+        mainContent.addControl(item);
+      }
+
+      // EXTRA ASSETS
+      const extraPanel = new BABYLON.GUI.Rectangle();
+      extraPanel.height = "0.3";
+      extraPanel.width = "100%";
+      extraPanel.thickness = 0;
+      extraPanel.background = "#1a1a1a";
+      rightStack.addControl(extraPanel);
+
+      const extraLabel = new BABYLON.GUI.TextBlock();
+      extraLabel.text = "EXTRA ASSETS";
+      extraLabel.color = "#888888";
+      extraLabel.fontSize = 18;
+      extraLabel.height = "40px";
+      extraPanel.addControl(extraLabel);
+
+      // Bottom logo
+      const logo = new BABYLON.GUI.TextBlock();
+      logo.text = "V⁺\nVERMILLION M⁺";
+      logo.color = "white";
+      logo.fontSize = 24;
+      logo.fontStyle = "bold";
+      logo.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+      logo.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+      logo.paddingRight = "20px";
+      logo.paddingBottom = "20px";
+      logo.width = "200px";
+      logo.height = "80px";
+      advancedTexture.addControl(logo);
+
+      return scene;
+    }
+
+    const scene = createScene();
+    loadVehicle(vehicles[0].url, vehicles[0].name);
+    engine.runRenderLoop(() => {
+      scene.render();
+    });
+
+    window.addEventListener("resize", () => {
+      engine.resize();
+    });  
+  </script>
+</body>
+</html>
