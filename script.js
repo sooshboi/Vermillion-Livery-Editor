@@ -1,9 +1,10 @@
 // === Load GLB car model ===
 const loader = new GLTFLoader();
 loader.load(
-    'C7VETTEMODEL/c7unibody.glb', // your specific GLB file
+    'https://github.com/sooshboi/Vermillion-Livery-Editor/blob/main/C7VETTEMODEL/c7unibody.glb'
     (gltf) => {
         const car = gltf.scene;
+        carModel.position.set(0, 0, 0);
         car.scale.set(1, 1, 1);
         scene.add(car);
 
