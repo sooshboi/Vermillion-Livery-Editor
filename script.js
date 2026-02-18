@@ -18,29 +18,21 @@ dirLight.position.set(5, 5, 5);
 scene.add(dirLight);
 camera.position.z = 5;
 
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(),
-  new THREE.MeshNormalMaterial()
-);
-scene.add(cube);
-
    const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
    const loader = new GLTFLoader();
    let carModel = null;
-loader.load(
- 'https://raw.githubusercontent.com/sooshboi/vermillion-livery-editor/main/CAMAROMODEL/CAMAROUnibody.glb', // ← CHANGE THIS TO YOUR RAW URL
- (gltf) => {
- carModel = gltf.scene;
- scene.add(carModel);
- carModel.position.set(0, 0, 0);
- carModel.scale.set(1, 1, 1);
- console.log('Default car loaded!');
- },
- (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
- (error) => console.error('Error loading default car:', error)
+loader.load('./models/camaro.glb',
+'https://raw.githubusercontent.com/sooshboi/vermillion-livery-editor/main/CAMAROMODEL/CAMAROUnibody.glb',  
+    (gltf) => {
+    console.log('Model loaded');
+    carModel = gltf.scene;
+    scene.add(carModel);
+  },
+  undefined,
+  (error) => console.error('Load error', error)
 );
 
 function animate() {
