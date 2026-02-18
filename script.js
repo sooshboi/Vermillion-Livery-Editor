@@ -23,7 +23,14 @@
 
     // Three.js setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const testCube = new THREE.Mesh(
+  new THREE.BoxGeometry(2, 2, 2),
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+);
+testCube.position.set(1, 1, 1);
+scene.add(testCube);
+console.log('Red cube added — look for it in viewport');
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('three-canvas').appendChild(renderer.domElement);
